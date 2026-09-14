@@ -2,6 +2,6 @@ apiVersion: v2
 name: testchart
 version: 0.1.0
 dependencies:
-  - name: nginx
-    version: "19.0.0"
-    repository: "https://charts.bitnami.com/bitnami"
+  - name: haproxy
+    version: "2.7.2"
+    repository: "https://charts.appuio.ch"
