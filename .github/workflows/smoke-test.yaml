@@ -1,0 +1,63 @@
+name: SmokeTest
+
+on:
+  push:
+    paths:
+      - .github/workflows/smoke-test.yaml
+      - Dockerfile
+      - Dockerfile.v4
+      - .gpg/**
+      - test/**
+
+  pull_request:
+    paths:
+      - .github/workflows/smoke-test.yaml
+      - Dockerfile
+      - Dockerfile.v4
+      - .gpg/**
+      - test/**
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: v3
+            make_target: docker-build
+            image: ghcr.io/appuio/helm:smoke-test
+          - name: v4
+            make_target: docker-build-v4
+            image: ghcr.io/appuio/helm-v4:smoke-test
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build docker image
+        run: make ${{ matrix.make_target }} IMAGE_TAG=smoke-test
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: smoke-test
+
+      - name: Load image into kind
+        run: kind load docker-image ${{ matrix.image }} --name smoke-test
+
+      - name: Smoke test 1 - helm version as UID 1001
+        run: docker run --rm --user 1001 ${{ matrix.image }} helm version
+
+      - name: Smoke test 2 - repo add and dependency update as UID 1001
+        run: |
+          docker run --rm --user 1001 \
+            -v "$PWD/test/chart:/chart" \
+            ${{ matrix.image }} sh -c "helm repo add bitnami https://charts.bitnami.com/bitnami && helm dependency update /chart"
+
+      - name: Smoke test 3 - helm install dry-run against cluster as UID 1001
+        run: |
+          docker run --rm --user 1001 --network host \
+            -v "$HOME/.kube/config:/kubeconfig:ro" \
+            -v "$PWD/test/chart:/chart" \
+            -e KUBECONFIG=/kubeconfig \
+            ${{ matrix.image }} helm install --dry-run smoke-test /chart

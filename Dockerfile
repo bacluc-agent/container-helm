@@ -63,6 +63,6 @@ RUN set -x \
  # Needed otherwise adding repos fails
  && mkdir -p /app/.config/helm \
  && chown -R 65534 /app \
- && chmod -R g+w /app
+ && chmod -R a+rwX /app
 
 USER 65534:0
