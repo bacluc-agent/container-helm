@@ -52,3 +52,7 @@ Whenever the Helm version was updated, tag a new version:
 [helm-diff]: https://github.com/databus23/helm-diff
 [helm-secrets]: https://github.com/jkroepke/helm-secrets
 [helm-git]: https://github.com/aslafy-z/helm-git
+
+## Demo
+
+This branch exists to demonstrate that the CI workflow runs on PRs whose head branch does not contain the workflow change.
