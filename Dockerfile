@@ -1,11 +1,13 @@
 FROM docker.io/library/alpine:3.24
 
 # renovate: datasource=github-releases depName=helm/helm
-ENV HELM_VERSION=v3.20.2
+ENV HELM_VERSION=v3.22.0
 # renovate: datasource=github-releases depName=helmfile/helmfile
-ENV HELMFILE_VERSION=v1.7.4
+ENV HELMFILE_VERSION=v1.8.0
 # renovate: datasource=github-releases depName=mozilla/sops
-ENV SOPS_VERSION=v3.12.2
+ENV SOPS_VERSION=v3.13.3
+# renovate: datasource=github-releases depName=databus23/helm-diff
+ENV HELM_DIFF_VERSION=v3.15.14
 # renovate: datasource=github-releases depName=kubernetes/kubernetes
 ENV KUBECTL_VERSION=v1.35.8
 
@@ -55,7 +57,7 @@ ENV HOME=/app
 RUN set -x \
  && helm plugin install https://github.com/aslafy-z/helm-git \
  && helm plugin install https://github.com/chartmuseum/helm-push \
- && helm plugin install https://github.com/databus23/helm-diff \
+ && helm plugin install https://github.com/databus23/helm-diff --version "$HELM_DIFF_VERSION" \
  && helm plugin install https://github.com/jkroepke/helm-secrets \
  && git version \
  && helm version \
