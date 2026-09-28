@@ -71,8 +71,8 @@ COPY .gpg /.gpg
 RUN chmod -R a+rX /.gpg
 
 RUN set -x \
- && gpg --import /.gpg/jkroepke.gpg \
  && mkdir -p "$HOME/.gnupg" \
+ && gpg --import /.gpg/jkroepke.gpg \
  && gpg --export >~/.gnupg/pubring.gpg \
  && mkdir -p "$HOME" "$HELM_CONFIG_HOME" "$HELM_CACHE_HOME" "$HELM_DATA_HOME" "$HELM_PLUGINS" \
  && helm plugin install https://github.com/aslafy-z/helm-git --verify=false \
